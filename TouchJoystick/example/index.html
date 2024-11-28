@@ -29,15 +29,29 @@
         .stick-1 {
             background-color: yellow;
         }
-.touch-circle-inner {
-    /* Style goes here*/
-    width: calc(15vw / 2);
-    left: calc( (15vw - (15vw / 2)) / 2);
-    top: calc( (15vw - (15vw / 2)) / 2);
-}
+        .touch-circle-inner {
+            /* Style goes here*/
+            width: calc(15vw / 2);
+            left: calc( (15vw - (15vw / 2)) / 2);
+            top: calc( (15vw - (15vw / 2)) / 2);
+        }
+        #info {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            font-size: 2em;
+        }
+        /* pointer: coarse aka we're on a mobile device with touch input */
+        @media (pointer: coarse) {
+            #info {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
+    <div id="info">Please view this page on a mobile / touch device.</div>
     <div class="joystick-wrapper"></div>
     <div class="joystick-wrapper"></div>
 </body>

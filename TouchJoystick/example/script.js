@@ -1,7 +1,7 @@
 "use strict";
 let counter = 0;
 for (let element of document.getElementsByClassName("joystick-wrapper")) {
-    let joystick = new TouchJoystick.Joystick(element, { positioning: "fixed", handle: { limit: 1, round: true }, following: false });
+    let joystick = new TouchJoystick.Joystick(element, { positioning: "fixed", handle: { limit: 1, round: true }, following: true });
     joystick.addEventListener(TouchJoystick.EVENT.CHANGE, (_event) => {
         console.log(TouchJoystick.EVENT.CHANGE, _event.detail);
     });
