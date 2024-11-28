@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../TouchJoystick.js"></script>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="../TouchJoystick.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        .joystick-wrapper {
+            width: 100vw;
+            height: 50vh;
+            position: relative;
+            border: 1px solid black;
+        }
+
+        .stick-0 {
+            background-color: red;
+        }
+        .stick-1 {
+            background-color: yellow;
+        }
+.touch-circle-inner {
+    /* Style goes here*/
+    width: calc(15vw / 2);
+    left: calc( (15vw - (15vw / 2)) / 2);
+    top: calc( (15vw - (15vw / 2)) / 2);
+}
+    </style>
+</head>
+<body>
+    <div class="joystick-wrapper"></div>
+    <div class="joystick-wrapper"></div>
+</body>
+</html>
