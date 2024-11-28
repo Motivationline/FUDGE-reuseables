@@ -21,7 +21,7 @@ var TouchJoystick;
      * you'll get a value representative of how far the touch point actually is from the center of the joystick!
      *
      * #### Styling
-     * The joystick will be created as two styleable divs inside the given parent element. The parent element also defines the joysticks boundaries.
+     * The joystick will be created as two styleable divs inside the given parent element. The parent element also defines the joysticks boundaries (can be disabled).
      * You can access the outer div using `joystick.element` for further editing (e.g. adding ids or classes).
      *
      * For reactionary styling, various css classes are applied to the outer element to reflect the current state of the joystick. `active`, `inactive`, `fixed` and `floating`. See the `TouchJoystick.css` file for examples.
@@ -61,6 +61,7 @@ var TouchJoystick;
                 limitInput: "none",
                 positioning: "fixed",
                 invertY: false,
+                limitToParentElement: true,
             };
         }
         /** The **unclamped** (see class documentation for more info) **horizontal (x)** distance between the center of the joystick and the current touch point. 0 if inactive.
@@ -98,6 +99,21 @@ var TouchJoystick;
         }
         get positioning() {
             return this.#options.positioning;
+        }
+        set handle(_handle) {
+            this.#options.handle = _handle;
+        }
+        set following(_following) {
+            this.#options.following = _following;
+        }
+        set limitToParentElement(_limitToParentElement) {
+            this.#options.limitToParentElement = _limitToParentElement;
+        }
+        set limitInput(_limitInput) {
+            this.#options.limitInput = _limitInput;
+        }
+        set invertY(_invertY) {
+            this.#options.invertY = _invertY;
         }
         hndTouchEvent = (_event) => {
             let touches = _event.changedTouches;
@@ -155,9 +171,14 @@ var TouchJoystick;
                 offsetX = offsetX / (bcrO.width / 2);
                 offsetY = offsetY / (bcrO.height / 2);
                 if (this.#options.following && (Math.abs(offsetX) > this.#options.handle.limit || Math.abs(offsetY) > this.#options.handle.limit)) {
-                    // follower code
+                    // follow the finger position
                     let newPosX = Math.max(0, (Math.abs(offsetX) - this.#options.handle.limit)) * Math.sign(offsetX) * (bcrO.width / 2) + this.#touchStart.x;
                     let newPosY = Math.max(0, (Math.abs(offsetY) - this.#options.handle.limit)) * Math.sign(offsetY) * (bcrO.height / 2) + this.#touchStart.y;
+                    // limit the movement to the parent element
+                    if (this.#options.limitToParentElement) {
+                        newPosX = Math.max(bcrO.width / 2, Math.min(bcrParent.width - bcrO.width / 2, newPosX));
+                        newPosY = Math.max(bcrO.height / 2, Math.min(bcrParent.height - bcrO.height / 2, newPosY));
+                    }
                     this.positionJoystick(newPosX, newPosY);
                 }
                 let visualOffsetX = offsetX;

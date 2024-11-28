@@ -10,6 +10,18 @@ namespace TouchJoystick {
 
     export type JoystickPositioning = "fixed" | "floating";
     export type JoystickLimitation = "none" | "x" | "y";
+    export interface JoystickHandleOptions {
+        /** Max distance from center point the inner ring can be visually pulled.  
+         * 0 = no movement  
+         * 1 = edge of the outer ring    
+         * _Default: `1`_ 
+        */
+        limit: number,
+        /** Whether the inner handle should behave like it is in a rounded or square limitation.  
+         * _Default: `true`_
+         */
+        round: boolean,
+    }
 
     /** A joystick comes with various functionalities out of the box. To configure them, set the options accordingly. They all come with reasonable defaults. */
     export interface JoystickOptions {
@@ -21,18 +33,7 @@ namespace TouchJoystick {
          */
         positioning: JoystickPositioning,
         /** Adjusts inner-handle related settings. */
-        handle: {
-            /** Max distance from center point the inner ring can be visually pulled.  
-             * 0 = no movement  
-             * 1 = edge of the outer ring    
-             * _Default: `1`_ 
-            */
-            limit: number,
-            /** Whether the inner handle should behave like it is in a rounded or square limitation.  
-             * _Default: `true`_
-             */
-            round: boolean,
-        }
+        handle: JoystickHandleOptions,
         /** Allows you to limit the input of the joystick to one axis.  
          * Possible values: `"none" | "x" | "y"`  
          * _Default: `"none"`_
@@ -46,6 +47,10 @@ namespace TouchJoystick {
          * _Default: `false`_
          */
         invertY: boolean,
+        /** Limits the movement from the `following` attribute to the parents boundaries.  
+         * _Default: `true`_
+         */
+        limitToParentElement: boolean
     }
 
     /** 
@@ -59,7 +64,7 @@ namespace TouchJoystick {
      * you'll get a value representative of how far the touch point actually is from the center of the joystick!
      * 
      * #### Styling
-     * The joystick will be created as two styleable divs inside the given parent element. The parent element also defines the joysticks boundaries.
+     * The joystick will be created as two styleable divs inside the given parent element. The parent element also defines the joysticks boundaries (can be disabled).
      * You can access the outer div using `joystick.element` for further editing (e.g. adding ids or classes).
      * 
      * For reactionary styling, various css classes are applied to the outer element to reflect the current state of the joystick. `active`, `inactive`, `fixed` and `floating`. See the `TouchJoystick.css` file for examples.
@@ -107,6 +112,7 @@ namespace TouchJoystick {
                 limitInput: "none",
                 positioning: "fixed",
                 invertY: false,
+                limitToParentElement: true,
             }
         }
 
@@ -148,6 +154,25 @@ namespace TouchJoystick {
 
         get positioning(): JoystickPositioning {
             return this.#options.positioning;
+        }
+
+        set handle(_handle: JoystickHandleOptions){
+            this.#options.handle = _handle;
+        }
+
+        set following(_following: boolean){
+            this.#options.following = _following;
+        }
+
+        set limitToParentElement(_limitToParentElement: boolean){
+            this.#options.limitToParentElement = _limitToParentElement;
+        }
+
+        set limitInput(_limitInput: JoystickLimitation){
+            this.#options.limitInput = _limitInput;
+        }
+        set invertY(_invertY: boolean){
+            this.#options.invertY = _invertY;
         }
 
         private hndTouchEvent = (_event: TouchEvent) => {
@@ -214,9 +239,15 @@ namespace TouchJoystick {
                 offsetY = offsetY / (bcrO.height / 2);
 
                 if (this.#options.following && (Math.abs(offsetX) > this.#options.handle.limit || Math.abs(offsetY) > this.#options.handle.limit)) {
-                    // follower code
+                    // follow the finger position
                     let newPosX = Math.max(0, (Math.abs(offsetX) - this.#options.handle.limit)) * Math.sign(offsetX) * (bcrO.width / 2) + this.#touchStart.x;
                     let newPosY = Math.max(0, (Math.abs(offsetY) - this.#options.handle.limit)) * Math.sign(offsetY) * (bcrO.height / 2) + this.#touchStart.y;
+
+                    // limit the movement to the parent element
+                    if (this.#options.limitToParentElement) {
+                        newPosX = Math.max(bcrO.width / 2, Math.min(bcrParent.width - bcrO.width / 2, newPosX));
+                        newPosY = Math.max(bcrO.height / 2, Math.min(bcrParent.height - bcrO.height / 2, newPosY));
+                    }
 
                     this.positionJoystick(newPosX, newPosY);
                 }
@@ -239,7 +270,7 @@ namespace TouchJoystick {
                 this.#htmlInnerElement.style.left = `${visualOffsetX}px`;
                 this.#htmlInnerElement.style.top = `${visualOffsetY}px`;
 
-                
+
                 if (this.#options.invertY) {
                     offsetY *= -1;
                 }

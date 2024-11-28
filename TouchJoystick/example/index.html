@@ -19,7 +19,6 @@
         .joystick-wrapper {
             width: 100vw;
             height: 50vh;
-            position: relative;
             border: 1px solid black;
         }
 
@@ -42,6 +41,13 @@
             place-items: center;
             font-size: 2em;
         }
+        label {
+            display: block;
+            padding-left: 0.5rem;
+        }
+        #output {
+            color: gray;
+        }
         /* pointer: coarse aka we're on a mobile device with touch input */
         @media (pointer: coarse) {
             #info {
@@ -53,6 +59,46 @@
 <body>
     <div id="info">Please view this page on a mobile / touch device.</div>
     <div class="joystick-wrapper"></div>
-    <div class="joystick-wrapper"></div>
+    <div id="output">Latest Event</div>
+    <form>
+        <strong>General</strong>
+        <label>
+            limitInput
+            <select name="limitInput" id="limitInput">
+                <option value="none" selected>none</option>
+                <option value="x">x</option>
+                <option value="y">y</option>
+            </select>
+        </label>
+        <label>
+            Positioning
+            <select name="positioning" id="positioning">
+                <option value="fixed" selected>fixed</option>
+                <option value="floating">floating</option>
+            </select>
+        </label>
+        <label>
+            invertY
+            <input type="checkbox" name="invertY" id="invertY">
+        </label>
+        <strong>Follow Touch</strong>
+        <label>
+            following
+            <input type="checkbox" name="following" id="following">
+        </label>
+        <label>
+            limitToParentElement
+            <input type="checkbox" name="limitToParentElement" id="limitToParentElement" checked>
+        </label>
+        <strong>Handle</strong>
+        <label>
+            Limit
+            <input type="number" name="handle.limit" id="handleLimit" value = "1" min="0" step="0.25" max="5">
+        </label>
+        <label>
+            Round
+            <input type="checkbox" name="handle.round" id="handleRound" checked>
+        </label>
+    </form>
 </body>
 </html>

@@ -12,6 +12,7 @@
 
 .touch-circle-parent {
     display: none;
+    position: relative;
 }
 
 
